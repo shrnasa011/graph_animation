@@ -1,5 +1,3 @@
-%%manim -v WARNING -qh -t --disable_caching RandomSampleGraph
-
 """Input graph and induced random-sample illustration.
 
 Render with::

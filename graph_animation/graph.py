@@ -1,29 +1,23 @@
 from __future__ import annotations
 
 from collections import defaultdict
-from typing import Dict, Iterable
+from typing import Iterable
 
 import numpy as np
 from manim import *
 
-from .primitives import Vertex, Edge, ContainerBlob
+from .primitives import Edge, Vertex
 
 
 class Graph:
-    """
-    Animated graph built from Vertex and Edge primitives.
-
-    This class is completely agnostic to any algorithm.
-    It simply manages the graph geometry and provides
-    convenient animation wrappers.
-    """
+    """An animated graph built from reusable vertex and edge primitives."""
 
     def __init__(
         self,
         vertices: list[str],
         edges: list[tuple[str, str]],
         positions: dict[str, np.ndarray],
-    ):
+    ) -> None:
 
         self.positions = positions
         self.edge_list = edges
@@ -32,7 +26,7 @@ class Graph:
         # Vertices
         ####################################################
 
-        self.vertices: Dict[str, Vertex] = {}
+        self.vertices: dict[str, Vertex] = {}
 
         for v in vertices:
             self.vertices[v] = Vertex(
@@ -44,7 +38,7 @@ class Graph:
         # Edges
         ####################################################
 
-        self.edges: Dict[frozenset[str], Edge] = {}
+        self.edges: dict[frozenset[str], Edge] = {}
 
         for u, v in edges:
             self.edges[frozenset((u, v))] = Edge(
@@ -91,31 +85,33 @@ class Graph:
     # Convenience
     ########################################################
 
-    def __getitem__(self, vertex: str):
-
+    def __getitem__(self, vertex: str) -> Vertex:
+        """Return the visual vertex with the given name."""
         return self.vertices[vertex]
 
     def __iter__(self):
+        """Iterate over vertex names."""
         return iter(self.vertices)
-        
+
     @property
     def mobject(self):
-
+        """The Manim group containing all graph visuals."""
         return self.view
 
     ########################################################
     # Queries
     ########################################################
 
-    def neighbors(self, vertex: str):
-
+    def neighbors(self, vertex: str) -> set[str]:
+        """Return the names of vertices adjacent to ``vertex``."""
         return self.adjacency[vertex]
 
     def degree(
         self,
         vertex: str,
-        active_only=True,
-    ):
+        active_only: bool = True,
+    ) -> int:
+        """Return degree, optionally counting only active neighbors."""
 
         if not active_only:
             return len(self.adjacency[vertex])
@@ -125,22 +121,17 @@ class Graph:
             for u in self.adjacency[vertex]
         )
 
-    def is_active(
-        self,
-        vertex: str
-    ):
+    def is_active(self, vertex: str) -> bool:
+        """Return whether the named vertex is active."""
         return self.vertices[vertex].is_active()
 
-    def edge(self, u, v):
-
+    def edge(self, u: str, v: str) -> Edge:
+        """Return the edge joining ``u`` and ``v``."""
         return self.edges[frozenset((u, v))]
 
-    def incident_edges(self, vertex):
-
-        return [
-            self.edge(vertex, u)
-            for u in self.neighbors(vertex)
-        ]
+    def incident_edges(self, vertex: str) -> list[Edge]:
+        """Return all edges touching ``vertex``."""
+        return [self.edge(vertex, neighbor) for neighbor in self.neighbors(vertex)]
 
     ########################################################
     # Vertex animations
