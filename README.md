@@ -15,6 +15,8 @@ source .venv/bin/activate        # Windows: .venv\Scripts\activate
 python -m pip install manim numpy
 ```
 
+The graph labels use Manim's `MathTex`, so rendering also needs a LaTeX installation and `dvisvgm`. On Debian/Ubuntu (including Colab), install `texlive-latex-extra`, `texlive-fonts-recommended`, `cm-super`, and `dvisvgm`. The Colab setup cell in `Demos.ipynb` installs these automatically.
+
 Run commands from this directory. For example, render the basic graph scene:
 
 ```bash
